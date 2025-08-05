@@ -6,10 +6,86 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// Enum for product label
+enum ProductLabel {
+  new
+  best
+  sell
+  empty // for ""
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  slug          String   @unique
+  title         String
+  description   String?
+  basePrice     Float
+  discount      Int      @default(0)
+  discountPrice Float?   // can be undefined/null
+  label         ProductLabel @default(empty)
+  rating        Float?   // can be undefined/null
+  reviewsCount  Int?     // can be undefined/null
+  category      String?
+  brand         String?
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ProductVariant {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  color     String
+  colorHex  String?
+  images    String[]
+  sizes     ProductSize[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductSize {
+  id         Int             @id @default(autoincrement())
+  variantId  Int
+  variant    ProductVariant  @relation(fields: [variantId], references: [id])
+  size       String
+  inStock    Boolean
+  quantity   Int
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  price     Float
 }

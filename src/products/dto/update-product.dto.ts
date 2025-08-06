@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString, IsNumber, IsArray, IsOptional, ValidateNested } from 'class-validator';
 import { ProductLabel } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { CreateProductVariantDto } from './create-product.dto';
+import { CreateProductVariantDto } from './';
 
 export class UpdateProductDto {
 

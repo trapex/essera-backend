@@ -1,43 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsNumber, IsBoolean, IsArray, IsOptional, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, IsNumber, IsArray, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProductLabel } from '@prisma/client';
-
-export class CreateProductSizeDto {
-  @ApiProperty({ example: '34B' })
-  @IsString()
-  size: string;
-
-  @ApiProperty({ example: 5 })
-  @IsNumber()
-  quantity: number;
-
-  @ApiProperty({ example: true })
-  @IsBoolean()
-  inStock: boolean;
-}
-
-export class CreateProductVariantDto {
-  @ApiProperty({ example: 'white' })
-  @IsString()
-  color: string;
-
-  @ApiProperty({ example: '#FFFFFF', required: false })
-  @IsOptional()
-  @IsString()
-  colorHex?: string;
-
-  @ApiProperty({ example: ['white-bra-1.jpg', 'white-bra-2.jpg'] })
-  @IsArray()
-  @IsString({ each: true })
-  images: string[];
-
-  @ApiProperty({ type: [CreateProductSizeDto] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateProductSizeDto)
-  sizes: CreateProductSizeDto[];
-}
+import { CreateProductVariantDto } from './';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'white-bra' })

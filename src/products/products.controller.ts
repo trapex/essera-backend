@@ -2,22 +2,25 @@ import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, HttpCode
 import { ProductsService } from './products.service';
 import { plainToInstance } from 'class-transformer';
 import { ApiOkResponse } from '@nestjs/swagger';
-import { CreateProductDto, UpdateProductDto, CreateProductVariantDto, UpdateProductVariantDto, CreateProductSizeDto, UpdateProductSizeDto, CreateDetailDto, UpdateDetailDto, DetailsResponseDto } from './dto';
+import { CreateProductDto, UpdateProductDto, CreateProductVariantDto, UpdateProductVariantDto, CreateProductSizeDto, UpdateProductSizeDto, ProductResponseDto } from './dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiOkResponse({ type: ProductResponseDto, isArray: true })
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
+  @ApiOkResponse({ type: ProductResponseDto })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
 
+  @ApiOkResponse({ type: ProductResponseDto })
   @Get('slug/:slug')
   findBySlug(@Param('slug') slug: string) {
     return this.productsService.findBySlug(slug);
@@ -74,45 +77,5 @@ export class ProductsController {
     @Body() dto: UpdateProductSizeDto,
   ) {
     return this.productsService.updateSize(sizeId, dto);
-  }
-
-  // DETAILS
-  @ApiOkResponse({ type: DetailsResponseDto, isArray: true })
-  @Get(':productId/details')
-  async getDetailsByProductId(@Param('productId', ParseIntPipe) productId: number) {
-    const details = await this.productsService.getDetailsByProductId(productId);
-    return plainToInstance(DetailsResponseDto, details, {
-      excludeExtraneousValues: true,
-    });
-  }
-
-  @ApiOkResponse({ type: DetailsResponseDto, isArray: true })
-  @Get('slug/:slug/details')
-  async getDetailsByProductSlug(@Param('slug') slug: string) {
-    const details = await this.productsService.getDetailsByProductSlug(slug);
-    return plainToInstance(DetailsResponseDto, details, {
-      excludeExtraneousValues: true,
-    });
-  }
-
-  @Post(':productId/details')
-  addDetail(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: CreateDetailDto,
-  ) {
-    return this.productsService.addDetail(productId, dto);
-  }
-
-  @Put('/details/:detailId')
-  updateDetail(
-    @Param('detailId', ParseIntPipe) detailId: number,
-    @Body() dto: UpdateDetailDto,
-  ) {
-    return this.productsService.updateDetail(detailId, dto);
-  }
-
-  @Delete('/details/:detailId')
-  removeDetail(@Param('detailId', ParseIntPipe) detailId: number) {
-    return this.productsService.removeDetail(detailId);
   }
 }

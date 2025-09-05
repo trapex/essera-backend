@@ -109,3 +109,22 @@ model Profile {
 
   @@map("profiles")
 }
+
+enum ContactStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+model ContactMessage {
+  id         String          @id @default(uuid())
+  name       String
+  email      String
+  comment    String
+  createdAt  DateTime        @default(now())
+  ip         String?
+  userAgent  String?
+  status      ContactStatus  @default(NEW)
+
+  @@index([createdAt(sort: Desc)])
+}
